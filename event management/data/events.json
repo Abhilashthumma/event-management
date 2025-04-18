@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1745163630001,
+    "name": "Guest Lecture on AI Ethics",
+    "location": "Room 204, CS Block",
+    "date": "2025-04-20",
+    "time": "10:00",
+    "info": "A session by Prof. Mehta on the ethical implications of AI."
+  },
+  {
+    "id": 1745163630002,
+    "name": "Coding Club Hackathon",
+    "location": "Lab 3, IT Block",
+    "date": "2025-04-21",
+    "time": "09:00",
+    "info": "24-hour hackathon for all undergrad students."
+  },
+  {
+    "id": 1745163630003,
+    "name": "Earth Day Poster Making",
+    "location": "Room 108, Arts Block",
+    "date": "2025-04-22",
+    "time": "14:00",
+    "info": "Poster competition on sustainability and climate action."
+  }
+]

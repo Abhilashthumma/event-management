@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Event Manager</title>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #4a148c, #3f51b5, #2196f3, #03a9f4, #00bcd4, #009688, #388e3c, #8f6d47);
+            background-size: 400% 400%;
+            animation: gradientAnimation 7s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            width: 450px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #1a237e;
+            margin-bottom: 35px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: #263238;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: calc(100% - 24px);
+            padding: 14px;
+            margin-bottom: 25px;
+            border: 2px solid #90caf9;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 18px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #ffb300;
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 179, 0, 0.5);
+        }
+
+        button[type="submit"],
+        .button-group button {
+            background-color: #212121;
+            color: white;
+            padding: 16px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        button[type="submit"]:hover,
+        .button-group button:hover {
+            background-color: #424242;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Welcome to the Event Hub!</h2>
+        <form id="loginForm">
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <label for="password">Enter Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+
+            <button type="submit">Sign In</button>
+        </form>
+
+        <div class="button-group">
+            <button onclick="location.href='/register'">Join Now</button>
+            <button onclick="location.href='/admin'">Admin Portal</button>
+        </div>
+
+        <p id="errorMessage" class="error-message"></p>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const email = event.target.email.value;
+            const password = event.target.password.value;
+            const errorMessageElement = document.getElementById('errorMessage');
+            errorMessageElement.textContent = '';
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return response.text().then(text => { throw new Error(text || 'Invalid credentials'); });
+                }
+            })
+            .then(user => {
+                localStorage.setItem('user', JSON.stringify(user));
+                window.location.href = '/dashboard';
+            })
+            .catch(error => {
+                errorMessageElement.textContent = error.message;
+            });
+        });
+    </script>
+</body>
+</html>

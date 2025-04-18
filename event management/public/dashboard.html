@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #4a148c, #3f51b5, #2196f3, #03a9f4, #00bcd4, #009688, #388e3c, #8f6d47);
+            background-size: 400% 400%;
+            animation: gradientAnimation 7s ease infinite;
+            margin: 0;
+            color: #263238; 
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .dashboard-container {
+            max-width: 1200px; 
+            margin: 40px auto;
+            padding: 40px; 
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; 
+            margin-bottom: 30px; 
+        }
+
+        .logout-btn {
+            background-color: #d32f2f; 
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            height: fit-content; 
+        }
+
+        .logout-btn:hover {
+            background-color: #b71c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #welcomeMsg {
+            font-size: 2.5em;
+            font-weight: 700;
+            padding: 8px 15px; 
+            background-color: white; 
+            color: transparent; 
+            -webkit-background-clip: text;
+            background-clip: text;
+            background-image: linear-gradient(90deg, #ff6b6b, #f06292, #ba68c8, #9575cd, #7986cb);
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            border-radius: 5px; 
+            margin-bottom: 0; 
+        }
+
+        h3 {
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            color: #1a237e; 
+        }
+
+        #eventsContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(550px, 1fr)); 
+            gap: 20px;
+        }
+
+        .event {
+            border: none;
+            padding: 20px;
+            margin-bottom: 0;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: grid; 
+            grid-template-columns: 1fr auto; 
+            align-items: flex-start; 
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; 
+        }
+
+        .event:hover {
+            background-color: rgba(255, 255, 255, 0.95); 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
+            cursor: pointer; 
+        }
+
+        .event-left > strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.2em;
+            color: #00897b;
+        }
+
+        .event-left > b {
+            color: #546e7a;
+            margin-right: 5px;
+        }
+
+        .event-info {
+            display: block;
+            margin-top: 8px;
+        }
+
+        .event-right {
+            text-align: left; 
+        }
+
+        .event-right .date {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .event-right .time {
+            display: block;
+        }
+
+        .event-right b {
+            margin-right: 5px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header-section">
+            <h2 id="welcomeMsg">Welcome</h2>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <h3>Upcoming Events</h3>
+        <div id="eventsContainer"></div>
+    </div>
+
+    <script>
+ 
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user && user.fullName) {
+            document.getElementById("welcomeMsg").innerText = `Welcome, ${user.fullName}`;
+        } else {
+            window.location.href = "/";
+        }
+
+        fetch('/events')
+            .then(response => response.json())
+            .then(events => {
+                const container = document.getElementById('eventsContainer');
+                const today = new Date().setHours(0, 0, 0, 0);
+
+                events.forEach(event => {
+                    const div = document.createElement('div');
+                    div.className = 'event';
+                    div.innerHTML = `
+                        <div class="event-left">
+                            <strong>${event.name}</strong>
+                            <b>Location:</b> ${event.location}
+                            <div class="event-info">${event.info}</div>
+                        </div>
+                        <div class="event-right">
+                            <div class="date"><b>Date:</b> ${event.date}</div>
+                            <div class="time"><b>Time:</b> ${event.time}</div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+
+               
+                const eventCount = container.children.length;
+                container.style.gridTemplateColumns = eventCount > 0 ? 'repeat(auto-fit, minmax(550px, 1fr))' : '1fr';
+            });
+
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>
